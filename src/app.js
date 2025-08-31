@@ -2,25 +2,23 @@ const express = require('express');
 
 const app = express();
 
-app.use(
-    "/user", (req, res, next) => {
-        console.log("Handling the route user!!");
-        // res.send("Response!!");
-        next();
-    },
-    (req, res,next) => {
-        console.log("Handling the route user 2!!");
-        // res.send("2nd Response!!");
-        next();
-    },
-    
+const { adminAuth, userAuth } = require("./middleware/auth");
 
-    (req, res, next) => {
-        console.log("Handling the route user 4!!");
-         res.send("4th Response!!");
-        
-    }
-);
+app.use("/admin, adminAuth");
+
+app.get("/user",  (req, res) => {
+    res.send("User data sent");
+});
+
+app.get("/admin/getAllData", (req, res) => {
+    res.send("All data sent");
+});
+
+app.get("/admin/deleteUser", (req, res) => {
+    res.send("Deleted a user");
+});
+
+
 
 app.listen(7777, () =>{
     console.log('Server is succesfully connected to port 7777');
