@@ -1,16 +1,11 @@
-const express = require('express');
-const connectDB = require('./config/database.js');
-const app = express();
+const express = require("express");
+const authRouter = express.Router();
+const User = require('./models/user');
 const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-const { userAuth} = require("./middleware/auth");
 
-app.use(express.json());
-app.use(cookieParser());
 
-// Signup api
-app.post("/signup", async (req,res) => { 
+
+authRouter.post("/signup", async (req,res) => { 
 try{    
     
 // Validation of data 
@@ -39,8 +34,7 @@ const user = new User({
    }
 });
 
-// Login api 
-app.post("/login", async (req,res) => {
+authRouter.post("/login", async (req,res) => {
 
     try {
        const { emailId, password} = req.body;
@@ -75,39 +69,6 @@ app.post("/login", async (req,res) => {
         res.status(400).send("Error : " + err.message);
         
     }
-})
-
-// profile api 
-app.get("/profile", userAuth, async (req,res) => {
-    try {
-        const user = req.user;
-
-    res.send( user);
-    } catch (err) {
-        res.status(400).send("Error : " + err.message);
-
-    }    
 });
 
-app.post("/sendConnectionRequest",userAuth, async (req,res) => {
-    const user = req.user;
-    // Sending the connection request
-    console.log("sending the connection request");
-
-    res.send(user.firstName + " sent the connection request"); 
-
-});
-
-connectDB()
-.then(()=> {
-console.log("database connected");
-app.listen(7777, () =>{
-    console.log('Server is succesfully connected to port 7777');
-
-});
-})
-.catch(err=>{
-console.log("database not connected");
-   
-});
-
+module.exports = authRouter;
